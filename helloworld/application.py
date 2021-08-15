@@ -71,9 +71,30 @@ def delete_cop():
     return Response(json.dumps(str(resp)), mimetype='application/json', status=200)
     
     
-
-#curl localhost:8000/analyze/my-upload-image/male.jpg  
     
+#curl localhost:8000/analyze/my-upload-image/male.jpg  
+
+@application.route('/analyze/<bucket>/<image>', methods=['GET'])
+def analyze(bucket='my-upload-image', image='yarden.jpeg'):
+    return detect_labels(bucket, image)
+def detect_labels(bucket, key, max_labels=3, min_confidence=90, region="us-east-1"):
+    rekognition = boto3.client("rekognition", region)
+    s3 = boto3.resource('s3', region_name = 'us-east-1')
+    image = s3.Object(bucket, key) # Get an Image from S3
+    img_data = image.get()['Body'].read() # Read the image
+    response = rekognition.detect_labels(
+        Image={
+            'Bytes': img_data
+        },
+        MaxLabels=max_labels,
+		MinConfidence=min_confidence,
+    )
+    return json.dumps(response['Labels'])
+    
+
+
+#curl localhost:8000/comp_face/shiran.jpeg/shiran2.jpeg
+
 @application.route('/comp_face/<source_image>/<target_image>', methods=['GET'])
 def compare_face(source_image, target_image):
     # change region and bucket accordingly
