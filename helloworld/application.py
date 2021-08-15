@@ -74,23 +74,31 @@ def delete_cop():
 
 #curl localhost:8000/analyze/my-upload-image/male.jpg  
     
-@application.route('/analyze/<bucket>/<image>', methods=['GET'])
-def analyze(bucket='my-upload-image', image='male.jpg'):
-    return detect_labels(bucket, image)
-def detect_labels(bucket, key, max_labels=3, min_confidence=90, region="us-east-1"):
+@application.route('/comp_face/<source_image>/<target_image>', methods=['GET'])
+def compare_face(source_image, target_image):
+    # change region and bucket accordingly
+    region = 'us-east-1'
+    bucket_name = 'my-upload-image'
+	
     rekognition = boto3.client("rekognition", region)
-    s3 = boto3.resource('s3', region_name = 'us-east-1')
-    image = s3.Object(bucket, key) # Get an Image from S3
-    img_data = image.get()['Body'].read() # Read the image
-    response = rekognition.detect_labels(
-        Image={
-            'Bytes': img_data
-        },
-        MaxLabels=max_labels,
-		MinConfidence=min_confidence,
+    response = rekognition.compare_faces(
+        SourceImage={
+    		"S3Object": {
+    			"Bucket": bucket_name,
+    			"Name":source_image,
+    		}
+    	},
+    	TargetImage={
+    		"S3Object": {
+    			"Bucket": bucket_name,
+    			"Name": target_image,
+    		}
+    	},
+		# play with the minimum level of similarity
+        SimilarityThreshold=50,
     )
-    return json.dumps(response['Labels'])
-    
+    # return 0 if below similarity threshold
+    return json.dumps(response['FaceMatches'] if response['FaceMatches'] != [] else [{"Similarity": 0.0}])
     
 
 
