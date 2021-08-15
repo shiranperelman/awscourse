@@ -52,6 +52,27 @@ def set_cop(id):
     table.put_item(Item=item)
     
     return Response(json.dumps(item), mimetype='application/json', status=200)
+    
+
+#curl -i http://"localhost:5000/delete_cops?id=1"
+@application.route('/del_cop' , methods=['GET'])
+
+def delete_cop():
+    id=request.args.get('id')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('cops')
+    
+    resp = table.delete_item(
+        Key={
+            'id':id
+        }
+        )
+    print (str(resp))
+    return Response(json.dumps(str(resp)), mimetype='application/json', status=200)
+ 
+
+
+    
 
 if __name__ == '__main__':
     flaskrun(application)
