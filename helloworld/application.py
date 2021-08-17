@@ -5,6 +5,7 @@ from helloworld.flaskrun import flaskrun
 import requests
 from flask_cors import CORS
 import boto3
+from datetime import datetime
 
 application = Flask(__name__)
 CORS(application, resources={r"/": {"origins": ""}})
@@ -17,6 +18,8 @@ def get():
 def post():
     return Response(json.dumps({'Output': 'Hello World'}), mimetype='application/json', status=200)
     
+    
+    
 @application.route('/get_cops', methods=['GET'])
 def get_id():
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
@@ -24,9 +27,11 @@ def get_id():
     # replace table scan ###
     resp = table.scan()
     print(str(resp))
-    return Response(json.dumps(str(resp['Items'])), mimetype='application/json', status=200)
+    return Response(json.dumps(resp['Items']), mimetype='application/json', status=200)
     
-# curl -i -X POST -d'{"name":"Shiran", "department":"Surgery", "years":"20"}' -H "Content-Type: application/json" http://localhost:5000/set_doctor/4
+    
+    
+# curl -i -X POST -d'{"name":"Shiran", "department":"Surgery", "years":"20"}' -H "Content-Type: application/json" http://localhost:8000/set_cop/4
 @application.route('/set_cop/<id>', methods=['POST'])
 def set_cop(id):
     
@@ -120,6 +125,19 @@ def compare_face(source_image, target_image):
     )
     # return 0 if below similarity threshold
     return json.dumps(response['FaceMatches'] if response['FaceMatches'] != [] else [{"Similarity": 0.0}])
+    
+    
+#@application.route('/upload_image' , methods=['POST'])
+
+def uploadImage():
+    mybucket = 'my-upload-image'
+    filobject = request.files['img']
+    s3 = boto3.resource('s3', region_name='us-east-1')
+    date_time = datetime.now()
+    dt_string = date_time.strftime("%d-%m-%Y-%H-%M-%S")
+    filename = "%s.jpg" % dt_string
+    s3.Bucket(mybucket).upload_fileobj(filobject, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
+    return {"imgName": filename}
     
 
 
