@@ -7,6 +7,7 @@ setup(
     install_requires=[
         'flask',
         'flask_cors',
+        'simplejson'
     ],
     setup_requires=[
         'pytest-runner',
