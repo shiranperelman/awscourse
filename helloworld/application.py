@@ -126,7 +126,7 @@ def uploadImage():
     filename = "%s.jpg" % dt_string
     s3.Bucket(mybucket).upload_fileobj(filobject, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
     imageUrl='https://my-upload-image.s3.amazonaws.com/%s'%filename
-    return {"imageUrl": imageUrl}
+    return {"imageUrl": imageUrl,"imageName":filename}
 
 
 # @application.route('/upload_image', methods=['GET'])
