@@ -53,7 +53,6 @@ def set_doc():
 
 #curl -i http://"localhost:5000/del_doctor?id=1"
 @application.route('/del_cop' , methods=['GET'])
-
 def del_doc():
     id=request.args.get('id')
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
@@ -118,7 +117,6 @@ def compare_face(source_image, target_image):
     
     
 @application.route('/upload_image' , methods=['POST'])
-
 def uploadImage():
     mybucket = 'my-upload-image'
     filobject = request.files['img']
@@ -127,7 +125,8 @@ def uploadImage():
     dt_string = date_time.strftime("%d-%m-%Y-%H-%M-%S")
     filename = "%s.jpg" % dt_string
     s3.Bucket(mybucket).upload_fileobj(filobject, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
-    return {"imgName": filename}
+    imageUrl='https://my-upload-image.s3.amazonaws.com/%s'%filename
+    return {"imageUrl": imageUrl}
 
 # @application.route('/upload_image', methods=['GET'])
 # def upload_file():
