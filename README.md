@@ -58,7 +58,7 @@ local computer. If you haven't, do that first. You can find instructions in the 
 
 5. Start the Flask development server:
 
-        $ python helloworld/application.py --port 8000
+        $ c
 
 6. Open http://127.0.0.1:8000/ in a web browser to view the output of your
    service.
