@@ -117,25 +117,25 @@ def compare_face(source_image, target_image):
     return json.dumps(response['FaceMatches'] if response['FaceMatches'] != [] else [{"Similarity": 0.0}])
     
     
-# @application.route('/upload_image' , methods=['POST'])
+@application.route('/upload_image' , methods=['POST'])
 
-# def uploadImage():
-#     mybucket = 'my-upload-image'
-#     filobject = request.files['img']
-#     s3 = boto3.resource('s3', region_name='us-east-1')
-#     date_time = datetime.now()
-#     dt_string = date_time.strftime("%d-%m-%Y-%H-%M-%S")
-#     filename = "%s.jpg" % dt_string
-#     s3.Bucket(mybucket).upload_fileobj(filobject, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
-#     return {"imgName": filename}
+def uploadImage():
+    mybucket = 'my-upload-image'
+    filobject = request.files['img']
+    s3 = boto3.resource('s3', region_name='us-east-1')
+    date_time = datetime.now()
+    dt_string = date_time.strftime("%d-%m-%Y-%H-%M-%S")
+    filename = "%s.jpg" % dt_string
+    s3.Bucket(mybucket).upload_fileobj(filobject, filename, ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'})
+    return {"imgName": filename}
 
-@application.route('/upload_image', methods=['GET'])
-def upload_file():
-    time = str(datetime.now())
-    file_name = 'myUpload' + time
-    bucket = 'my-upload-image'
-    client = boto3.client('s3')
-    return client.put_object(Body='', Bucket=bucket, Key=file_name)
+# @application.route('/upload_image', methods=['GET'])
+# def upload_file():
+#     time = str(datetime.now())
+#     file_name = 'myUpload' + time
+#     bucket = 'my-upload-image'
+#     client = boto3.client('s3')
+#     return client.put_object(Body='', Bucket=bucket, Key=file_name)
 
 if __name__ == '__main__':
     flaskrun(application)
